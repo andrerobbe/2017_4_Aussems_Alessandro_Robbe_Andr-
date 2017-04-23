@@ -1,24 +1,35 @@
 package hellotvxlet;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import javax.tv.xlet.*;
 import org.havi.ui.HScene;
 import org.havi.ui.HSceneFactory;
 import org.havi.ui.HStaticText;
 import org.havi.ui.HTextButton;
 import org.havi.ui.HVisible;
+import org.havi.ui.event.HActionListener;
 
 
-public class HelloTVXlet implements Xlet {
+public class HelloTVXlet implements Xlet,HActionListener {
     HScene scene;
-  
+    HStaticText placeholder;
+    int counter=0;
+    char[] wordToGuess={ 'T','E','S','T'};
+    char[] placeHolder=new char[wordToGuess.length];
     public HelloTVXlet() {
         
     }
 
     public void initXlet(XletContext context) {
+    for(int i = 0; i<placeHolder.length; i++)
+      {
+        placeHolder[i]='X';
+      }
       scene=HSceneFactory.getInstance().getDefaultHScene();
       HStaticText tekst1=new HStaticText("Raad het woord.",100,50,500,150);
+      placeholder=new HStaticText( String.valueOf(placeHolder),100,200,500,150);
       HTextButton A=new HTextButton("A",35,476,50,50);
       HTextButton B=new HTextButton("B",85,476,50,50);
       HTextButton C=new HTextButton("C",135,476,50,50);
@@ -45,6 +56,59 @@ public class HelloTVXlet implements Xlet {
       HTextButton X=new HTextButton("X",535,526,50,50);
       HTextButton Y=new HTextButton("Y",585,526,50,50);
       HTextButton Z=new HTextButton("Z",635,526,50,50);
+      A.setActionCommand("A");
+      B.setActionCommand("B");
+      C.setActionCommand("C");
+      D.setActionCommand("D");
+      E.setActionCommand("E");
+      F.setActionCommand("F");
+      G.setActionCommand("G");
+      H.setActionCommand("H");
+      I.setActionCommand("I");
+      J.setActionCommand("J");
+      K.setActionCommand("K");
+      L.setActionCommand("L");
+      M.setActionCommand("M");
+      N.setActionCommand("N");
+      O.setActionCommand("O");
+      P.setActionCommand("P");
+      Q.setActionCommand("Q");
+      R.setActionCommand("R");
+      S.setActionCommand("S");
+      T.setActionCommand("T");
+      U.setActionCommand("U");
+      V.setActionCommand("V");
+      W.setActionCommand("W");
+      X.setActionCommand("X");
+      Y.setActionCommand("Y");
+      Z.setActionCommand("Z");
+      A.addHActionListener((HActionListener) this);
+      B.addHActionListener((HActionListener) this);
+      C.addHActionListener((HActionListener) this);
+      D.addHActionListener((HActionListener) this);
+      E.addHActionListener((HActionListener) this);
+      F.addHActionListener((HActionListener) this);
+      G.addHActionListener((HActionListener) this);
+      H.addHActionListener((HActionListener) this);
+      I.addHActionListener((HActionListener) this);
+      J.addHActionListener((HActionListener) this);
+      K.addHActionListener((HActionListener) this);
+      L.addHActionListener((HActionListener) this);
+      M.addHActionListener((HActionListener) this);
+      N.addHActionListener((HActionListener) this);
+      O.addHActionListener((HActionListener) this);
+      P.addHActionListener((HActionListener) this);
+      Q.addHActionListener((HActionListener) this);
+      R.addHActionListener((HActionListener) this);
+      S.addHActionListener((HActionListener) this);
+      T.addHActionListener((HActionListener) this);
+      U.addHActionListener((HActionListener) this);
+      V.addHActionListener((HActionListener) this);
+      W.addHActionListener((HActionListener) this);
+      X.addHActionListener((HActionListener) this);
+      Y.addHActionListener((HActionListener) this);
+      Z.addHActionListener((HActionListener) this);
+      
       scene.add(A);
       scene.add(B);
       scene.add(C);
@@ -72,6 +136,7 @@ public class HelloTVXlet implements Xlet {
       scene.add(Y);
       scene.add(Z);
       scene.add(tekst1);
+      scene.add(placeholder);
       A.requestFocus();
       A.setFocusTraversal(null, N, M, B);
       B.setFocusTraversal(null,O,A,C);
@@ -117,5 +182,26 @@ public class HelloTVXlet implements Xlet {
 
     public void destroyXlet(boolean unconditional) {
      
+    }
+        public void actionPerformed(ActionEvent arg0) {
+        int index=new String(wordToGuess).indexOf(arg0.getActionCommand());
+        if(index>-1)
+        {
+            placeHolder[index]=wordToGuess[index];
+            scene.remove(placeholder);
+            HStaticText test;
+            test=new HStaticText( String.valueOf(placeHolder),100,200,500,150);
+            scene.repaint();  
+        }
+        else
+        {
+           HStaticText tekst2=new HStaticText("FOUT",100,0,500,50);
+           tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
+           tekst2.setBackground(Color.RED);
+           scene.add(tekst2);
+           scene.popToFront(tekst2);
+           scene.repaint();
+        }
+
     }
 }
