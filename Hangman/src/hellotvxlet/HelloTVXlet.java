@@ -6,6 +6,7 @@ import java.util.Arrays;
 import javax.tv.xlet.*;
 import org.havi.ui.HScene;
 import org.havi.ui.HSceneFactory;
+import org.havi.ui.HState;
 import org.havi.ui.HStaticText;
 import org.havi.ui.HTextButton;
 import org.havi.ui.HVisible;
@@ -15,6 +16,9 @@ import org.havi.ui.event.HActionListener;
 public class HelloTVXlet implements Xlet,HActionListener {
     HScene scene;
     HStaticText placeholder;
+    HStaticText chancesText;
+    boolean gameover=false;
+    int chances=5;
     int counter=0;
     char[] wordToGuess={ 'T','E','S','T'};
     char[] placeHolder=new char[wordToGuess.length];
@@ -28,7 +32,10 @@ public class HelloTVXlet implements Xlet,HActionListener {
         placeHolder[i]='X';
       }
       scene=HSceneFactory.getInstance().getDefaultHScene();
+      scene.setBackgroundMode(HVisible.BACKGROUND_FILL);
+      scene.setBackground(Color.BLACK);
       HStaticText tekst1=new HStaticText("Raad het woord.",100,50,500,150);
+      chancesText=new HStaticText(String.valueOf(chances),670,10,50,50);
       placeholder=new HStaticText( String.valueOf(placeHolder),100,200,500,150);
       HTextButton A=new HTextButton("A",35,476,50,50);
       HTextButton B=new HTextButton("B",85,476,50,50);
@@ -137,6 +144,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
       scene.add(Z);
       scene.add(tekst1);
       scene.add(placeholder);
+      scene.add(chancesText);
       A.requestFocus();
       A.setFocusTraversal(null, N, M, B);
       B.setFocusTraversal(null,O,A,C);
@@ -184,23 +192,31 @@ public class HelloTVXlet implements Xlet,HActionListener {
      
     }
         public void actionPerformed(ActionEvent arg0) {
-        int index=new String(wordToGuess).indexOf(arg0.getActionCommand());
-        if(index>-1)
+        if(!gameover)
         {
-            placeHolder[index]=wordToGuess[index];
-            scene.remove(placeholder);
-            HStaticText test;
-            test=new HStaticText( String.valueOf(placeHolder),100,200,500,150);
-            scene.repaint();  
-        }
-        else
-        {
-           HStaticText tekst2=new HStaticText("FOUT",100,0,500,50);
-           tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
-           tekst2.setBackground(Color.RED);
-           scene.add(tekst2);
-           scene.popToFront(tekst2);
-           scene.repaint();
+            int index=new String(wordToGuess).indexOf(arg0.getActionCommand());
+            if(index>-1)
+            {
+                placeHolder[index]=wordToGuess[index];
+                placeholder.setTextContent(String.valueOf(placeHolder),HState.NORMAL_STATE);  
+            }
+            else
+            {
+                chances=chances-1;
+                chancesText.setTextContent(String.valueOf(chances),HState.NORMAL_STATE);
+                if(chances==0)
+                    {
+                        gameover=true;
+                        HStaticText tekst2=new HStaticText("GAMEOVER",100,0,500,50);
+                        tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
+                        tekst2.setBackground(Color.RED);
+                        scene.add(tekst2);
+                        scene.popToFront(tekst2);
+                    }
+
+           
+            }
+        scene.repaint();
         }
 
     }
