@@ -1,8 +1,8 @@
 package hellotvxlet;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import javax.tv.xlet.*;
 import org.havi.ui.HScene;
 import org.havi.ui.HSceneFactory;
@@ -18,25 +18,41 @@ public class HelloTVXlet implements Xlet,HActionListener {
     HStaticText placeholder;
     HStaticText chancesText;
     boolean gameover=false;
-    int chances=5;
+    boolean wordguessed=false;
+    int chances=7;
     int counter=0;
-    char[] wordToGuess={ 'T','E','S','T'};
+    String[] words = {"SCHOOL", "COMPUTER", "MULTIMEDIA", "SCHOOLBORD",
+                      "QWERTY", "OPLADER", "STROOM", "SMARTBOARD", "AUDIO",
+                      "VIDEO", "GAMES", "WEBSITES", "DEVELOPMENT", "LERAAR",
+                      "STOEL", "DIGITAAL", "TECHNOLOGY", "RANDOM", "CAMPUS",
+                      "JAVASCRIPT", "HTML", "TOETSENBORD", "LAPTOP", "BEAMER",
+                      "SCHERM", "LAMPEN", "LOKAAL", "AULA", "KRIJTJE", "STIFT",
+                      "CURSUS", "VAKKEN", "DESIGN", "NERD", "WEBCAM", "MICROFOON",
+                      "BEDRIJFSLEVEN", "ARMZALIG", "PEN", "PAPIER", "STOPCONTACT",
+                      "KABEL", "TESTFASE", "MONDELING", "EXAMEN", "CONCEPT", "PAUZE",
+                      "ETEN", "WORSTENBROODJE", "WOORDENBOEK", "FACEBOOK", "INTERNET",
+                      "WIFI", "HACKEN", "BEGRAAFPLAATS", "HANGMAN", "SOFTWARE", "HARDWARE",
+                      "PIJLTJESTOETSEN", "GELUID", "MERKGEBONDENHEID", "ERASMUS", "ANTWERPEN",
+                      "KDG", "SCHERM", "GEBOUW", "CAMPUS"};
+    String Word=words[(int) (Math.random() * words.length)];
+    char[] wordToGuess=Word.toCharArray();
     char[] placeHolder=new char[wordToGuess.length];
+    Draw d=new Draw();
     public HelloTVXlet() {
         
     }
 
     public void initXlet(XletContext context) {
-    for(int i = 0; i<placeHolder.length; i++)
+      for(int i = 0; i<placeHolder.length; i++)
       {
-        placeHolder[i]='X';
+        placeHolder[i]='*';
       }
       scene=HSceneFactory.getInstance().getDefaultHScene();
       scene.setBackgroundMode(HVisible.BACKGROUND_FILL);
       scene.setBackground(Color.BLACK);
-      HStaticText tekst1=new HStaticText("Raad het woord.",100,50,500,150);
+      HStaticText tekst1=new HStaticText("Raad het woord.",100,20,500,150);
       chancesText=new HStaticText(String.valueOf(chances),670,10,50,50);
-      placeholder=new HStaticText( String.valueOf(placeHolder),100,200,500,150);
+      placeholder=new HStaticText( String.valueOf(placeHolder),100,300,500,150);
       HTextButton A=new HTextButton("A",35,476,50,50);
       HTextButton B=new HTextButton("B",85,476,50,50);
       HTextButton C=new HTextButton("C",135,476,50,50);
@@ -173,8 +189,8 @@ public class HelloTVXlet implements Xlet,HActionListener {
       Y.setFocusTraversal(L,null,X,Z);
       Z.setFocusTraversal(M,null,Y,N);
       
-      
-      
+      scene.add(d);
+      d.to_draw=this.chances;
       scene.validate();
       scene.setVisible(true);
      
@@ -187,22 +203,39 @@ public class HelloTVXlet implements Xlet,HActionListener {
     public void pauseXlet() {
      
     }
-
     public void destroyXlet(boolean unconditional) {
      
     }
         public void actionPerformed(ActionEvent arg0) {
-        if(!gameover)
+        char keypressed=arg0.getActionCommand().charAt(0);
+        if(!gameover && !wordguessed)
         {
-            int index=new String(wordToGuess).indexOf(arg0.getActionCommand());
+            int index=new String(wordToGuess).indexOf(keypressed);
             if(index>-1)
             {
-                placeHolder[index]=wordToGuess[index];
-                placeholder.setTextContent(String.valueOf(placeHolder),HState.NORMAL_STATE);  
+                for( int i=0 ; i<wordToGuess.length ; i++)
+                {
+                    if(wordToGuess[i]==keypressed)
+                    {
+                        placeHolder[i]=keypressed;
+                    }
+                }
+                placeholder.setTextContent(String.valueOf(placeHolder),HState.NORMAL_STATE); 
+                    if(new String(placeHolder).indexOf("*")<=-1)
+                    {
+                        wordguessed=true;
+                        HStaticText tekst2=new HStaticText("GERADEN",100,0,500,50);
+                        tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
+                        tekst2.setBackground(Color.GREEN);
+                        scene.add(tekst2);
+                        scene.popToFront(tekst2);
+                    }
             }
             else
             {
                 chances=chances-1;
+                d.to_draw=chances;
+                d.repaint();
                 chancesText.setTextContent(String.valueOf(chances),HState.NORMAL_STATE);
                 if(chances==0)
                     {
@@ -213,7 +246,6 @@ public class HelloTVXlet implements Xlet,HActionListener {
                         scene.add(tekst2);
                         scene.popToFront(tekst2);
                     }
-
            
             }
         scene.repaint();
