@@ -17,8 +17,13 @@ public class HelloTVXlet implements Xlet,HActionListener {
     HScene scene;
     HStaticText placeholder;
     HStaticText chancesText;
+    HStaticText ScoreValue;
+    HStaticText tekst2;
+    HTextButton RESTART;
+    HTextButton NEXT;
     boolean gameover=false;
     boolean wordguessed=false;
+    int score=0;
     int chances=7;
     int counter=0;
     String[] words = {"SCHOOL", "COMPUTER", "MULTIMEDIA", "SCHOOLBORD",
@@ -52,6 +57,8 @@ public class HelloTVXlet implements Xlet,HActionListener {
       scene.setBackground(Color.BLACK);
       HStaticText tekst1=new HStaticText("Raad het woord.",100,20,500,150);
       chancesText=new HStaticText(String.valueOf(chances),670,10,50,50);
+      HStaticText Score=new HStaticText("Score:",10,10,100,50);
+      ScoreValue=new HStaticText(String.valueOf(score),110,10,20,50);
       placeholder=new HStaticText( String.valueOf(placeHolder),100,300,500,150);
       HTextButton A=new HTextButton("A",35,476,50,50);
       HTextButton B=new HTextButton("B",85,476,50,50);
@@ -132,6 +139,16 @@ public class HelloTVXlet implements Xlet,HActionListener {
       Y.addHActionListener((HActionListener) this);
       Z.addHActionListener((HActionListener) this);
       
+      RESTART=new HTextButton("RESTART",40,400,100,50);
+      RESTART.setActionCommand("-");
+      RESTART.addHActionListener((HActionListener) this);
+      //scene.add(RESTART);
+      
+      NEXT=new HTextButton("NEXT",590,400,100,50);
+      NEXT.setActionCommand(">");
+      NEXT.addHActionListener((HActionListener) this);
+      //scene.add(NEXT);
+      
       scene.add(A);
       scene.add(B);
       scene.add(C);
@@ -159,11 +176,12 @@ public class HelloTVXlet implements Xlet,HActionListener {
       scene.add(Y);
       scene.add(Z);
       scene.add(tekst1);
+      scene.add(Score);
       scene.add(placeholder);
       scene.add(chancesText);
       A.requestFocus();
-      A.setFocusTraversal(null, N, M, B);
-      B.setFocusTraversal(null,O,A,C);
+      A.setFocusTraversal(RESTART, N, M, B);
+      B.setFocusTraversal(RESTART,O,A,C);
       C.setFocusTraversal(null,P,B,D);
       D.setFocusTraversal(null,Q,C,E);
       E.setFocusTraversal(null,R,D,F);
@@ -173,8 +191,8 @@ public class HelloTVXlet implements Xlet,HActionListener {
       I.setFocusTraversal(null,V,H,J);
       J.setFocusTraversal(null,W,I,K);
       K.setFocusTraversal(null,X,J,L);
-      L.setFocusTraversal(null,Y,K,M);
-      M.setFocusTraversal(null,Z,L,A);
+      L.setFocusTraversal(NEXT,Y,K,M);
+      M.setFocusTraversal(NEXT,Z,L,A);
       N.setFocusTraversal(A,null,Z,O);
       O.setFocusTraversal(B,null,N,P);
       P.setFocusTraversal(C,null,O,Q);
@@ -188,8 +206,13 @@ public class HelloTVXlet implements Xlet,HActionListener {
       X.setFocusTraversal(K,null,W,Y);
       Y.setFocusTraversal(L,null,X,Z);
       Z.setFocusTraversal(M,null,Y,N);
+      RESTART.setFocusTraversal(null,A, null, null);
+      NEXT.setFocusTraversal(null,L, null, null);
+      
+      ScoreValue.setTextContent(String.valueOf(score),HState.NORMAL_STATE);
       
       scene.add(d);
+      scene.add(ScoreValue);
       d.to_draw=this.chances;
       scene.validate();
       scene.setVisible(true);
@@ -208,7 +231,36 @@ public class HelloTVXlet implements Xlet,HActionListener {
     }
         public void actionPerformed(ActionEvent arg0) {
         char keypressed=arg0.getActionCommand().charAt(0);
-        if(!gameover && !wordguessed)
+        if((keypressed=='>' && wordguessed) || (keypressed=='-' && gameover))
+        {
+            
+            if(wordguessed)
+            {
+                score++;
+                scene.remove(NEXT);
+            }
+            if(gameover)
+            {
+                score=0;
+                scene.remove(RESTART);
+            }
+            wordguessed=false;
+            gameover=false;
+            ScoreValue.setTextContent(String.valueOf(score),HState.NORMAL_STATE);
+            scene.remove(tekst2);
+            chances=7;
+            d.to_draw=chances;
+            d.repaint();
+            Word=words[(int) (Math.random() * words.length)];
+            wordToGuess=Word.toCharArray();
+            placeHolder=new char[wordToGuess.length];
+            for(int i = 0; i<placeHolder.length; i++)
+           {
+            placeHolder[i]='*';
+            }
+            placeholder.setTextContent(String.valueOf(placeHolder),HState.NORMAL_STATE); 
+        }
+        if(!gameover && !wordguessed && keypressed!='>' && keypressed!='-')
         {
             int index=new String(wordToGuess).indexOf(keypressed);
             if(index>-1)
@@ -224,13 +276,15 @@ public class HelloTVXlet implements Xlet,HActionListener {
                     if(new String(placeHolder).indexOf("*")<=-1)
                     {
                         wordguessed=true;
-                        HStaticText tekst2=new HStaticText("GERADEN",100,0,500,50);
+                        tekst2=new HStaticText("GERADEN",100,0,500,50);
                         tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
                         tekst2.setBackground(Color.GREEN);
+                        scene.add(NEXT);
+                        NEXT.requestFocus();
                         scene.add(tekst2);
                         scene.popToFront(tekst2);
                     }
-            }
+             }
             else
             {
                 chances=chances-1;
@@ -240,10 +294,12 @@ public class HelloTVXlet implements Xlet,HActionListener {
                 if(chances==0)
                     {
                         gameover=true;
-                        HStaticText tekst2=new HStaticText("GAMEOVER",100,0,500,50);
+                        tekst2=new HStaticText("GAMEOVER",100,0,500,50);
                         tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
                         tekst2.setBackground(Color.RED);
                         scene.add(tekst2);
+                        scene.add(RESTART);
+                        RESTART.requestFocus();
                         scene.popToFront(tekst2);
                     }
            
