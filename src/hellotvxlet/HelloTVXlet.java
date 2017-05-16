@@ -16,7 +16,6 @@ import org.havi.ui.event.HActionListener;
 public class HelloTVXlet implements Xlet,HActionListener {
     HScene scene;
     HStaticText placeholder;
-    HStaticText chancesText;
     HStaticText ScoreValue;
     HStaticText tekst2;
     HTextButton RESTART;
@@ -56,7 +55,6 @@ public class HelloTVXlet implements Xlet,HActionListener {
       scene.setBackgroundMode(HVisible.BACKGROUND_FILL);
       scene.setBackground(Color.BLACK);
       HStaticText tekst1=new HStaticText("Raad het woord.",100,20,500,150);
-      chancesText=new HStaticText(String.valueOf(chances),670,10,50,50);
       HStaticText Score=new HStaticText("Score:",10,10,100,50);
       ScoreValue=new HStaticText(String.valueOf(score),110,10,20,50);
       placeholder=new HStaticText( String.valueOf(placeHolder),100,300,500,150);
@@ -178,7 +176,6 @@ public class HelloTVXlet implements Xlet,HActionListener {
       scene.add(tekst1);
       scene.add(Score);
       scene.add(placeholder);
-      scene.add(chancesText);
       A.requestFocus();
       A.setFocusTraversal(RESTART, N, M, B);
       B.setFocusTraversal(RESTART,O,A,C);
@@ -247,6 +244,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
             wordguessed=false;
             gameover=false;
             ScoreValue.setTextContent(String.valueOf(score),HState.NORMAL_STATE);
+            tekst2.setVisible(false);
             scene.remove(tekst2);
             chances=7;
             d.to_draw=chances;
@@ -276,7 +274,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
                     if(new String(placeHolder).indexOf("*")<=-1)
                     {
                         wordguessed=true;
-                        tekst2=new HStaticText("GERADEN",100,0,500,50);
+                        tekst2=new HStaticText("GERADEN",0,0,720,50);
                         tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
                         tekst2.setBackground(Color.GREEN);
                         scene.add(NEXT);
@@ -290,11 +288,10 @@ public class HelloTVXlet implements Xlet,HActionListener {
                 chances=chances-1;
                 d.to_draw=chances;
                 d.repaint();
-                chancesText.setTextContent(String.valueOf(chances),HState.NORMAL_STATE);
                 if(chances==0)
                     {
                         gameover=true;
-                        tekst2=new HStaticText("GAMEOVER",100,0,500,50);
+                        tekst2=new HStaticText("GAMEOVER",0,0,720,50);
                         tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
                         tekst2.setBackground(Color.RED);
                         scene.add(tekst2);
