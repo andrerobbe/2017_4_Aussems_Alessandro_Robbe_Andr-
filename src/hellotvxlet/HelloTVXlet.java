@@ -20,6 +20,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
     HStaticText tekst2;
     HTextButton RESTART;
     HTextButton NEXT;
+    HTextButton A;
     boolean gameover=false;
     boolean wordguessed=false;
     int score=0;
@@ -58,7 +59,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
       HStaticText Score=new HStaticText("Score:",10,10,100,50);
       ScoreValue=new HStaticText(String.valueOf(score),110,10,20,50);
       placeholder=new HStaticText( String.valueOf(placeHolder),100,300,500,150);
-      HTextButton A=new HTextButton("A",35,476,50,50);
+      A=new HTextButton("A",35,476,50,50);
       HTextButton B=new HTextButton("B",85,476,50,50);
       HTextButton C=new HTextButton("C",135,476,50,50);
       HTextButton D=new HTextButton("D",185,476,50,50);
@@ -257,6 +258,7 @@ public class HelloTVXlet implements Xlet,HActionListener {
             placeHolder[i]='*';
             }
             placeholder.setTextContent(String.valueOf(placeHolder),HState.NORMAL_STATE); 
+            A.requestFocus();
         }
         if(!gameover && !wordguessed && keypressed!='>' && keypressed!='-')
         {
